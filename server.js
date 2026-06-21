@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: 'https://my-company-website-three.vercel.app' }));
 app.use(express.json());
 
 // 1. The perfect link with the clean, symbol-free password
