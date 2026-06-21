@@ -48,6 +48,9 @@ app.post('/api/submit-form', async (req, res) => {
 });
 
 // This is the code that actually turns the server ON to listen to React!
-app.listen(5000, () => {
-  console.log('Server is running live on http://localhost:5000');
+// This tells the server: "Use the port Render gives us, or use 5000 if we are testing locally."
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server is running live on port ${PORT}`);
 });
