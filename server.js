@@ -6,20 +6,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 1. We use the completely clean, bare link. NO username, NO password, NO @ symbols!
-const myDatabaseLink = "mongodb://ac-6ezweqc-shard-00-00.ywwirdg.mongodb.net:27017,ac-6ezweqc-shard-00-01.ywwirdg.mongodb.net:27017,ac-6ezweqc-shard-00-02.ywwirdg.mongodb.net:27017/?ssl=true&replicaSet=atlas-jxr6cy-shard-0&authSource=admin&appName=Rohiniwebsitecluster";
+// 1. The perfect link with the clean, symbol-free password
+const myDatabaseLink = "mongodb://rohinidigitalmarketingaagency_db_user:Rohini12345@ac-6ezweqc-shard-00-00.ywwirdg.mongodb.net:27017,ac-6ezweqc-shard-00-01.ywwirdg.mongodb.net:27017,ac-6ezweqc-shard-00-02.ywwirdg.mongodb.net:27017/?ssl=true&replicaSet=atlas-jxr6cy-shard-0&authSource=admin&appName=Rohiniwebsitecluster";
 
-// 2. We pass the credentials completely separately so Node doesn't try to read them as a web link
+// 2. Connect keeping the family: 4 safety net
 mongoose.connect(myDatabaseLink, {
-  user: "rohinidigitalmarketingaagency_db_user",
-  pass: "Rohini@12345",
   family: 4 
 })
   .then(() => console.log('✅ Successfully connected to MongoDB!'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 
 
-// Blueprint for your contact form data
 const contactSchema = new mongoose.Schema({
   name: String,
   email: String,
@@ -31,17 +28,26 @@ const contactSchema = new mongoose.Schema({
 const Contact = mongoose.model('Contact', contactSchema);
 
 // The route that receives data from your React site
+// The route that receives data from your React site
 app.post('/api/submit-form', async (req, res) => {
+  console.log("\n🚨 ---> INCOMING DATA DETECTED! <--- 🚨");
+  
   try {
     const { name, email, phone, message } = req.body;
+    console.log("Here is what the frontend sent:", { name, email, phone, message });
+
     const newContact = new Contact({ name, email, phone, message });
     await newContact.save(); 
+    
+    console.log("✅ Data successfully saved to MongoDB!");
     res.status(201).json({ message: 'Data saved to MongoDB successfully!' });
   } catch (error) {
+    console.error('\n❌ MONGODB SAVE ERROR:', error.message); 
     res.status(500).json({ message: 'Failed to save data', error });
   }
 });
 
+// This is the code that actually turns the server ON to listen to React!
 app.listen(5000, () => {
   console.log('Server is running live on http://localhost:5000');
 });
